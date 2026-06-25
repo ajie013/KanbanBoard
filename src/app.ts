@@ -122,15 +122,67 @@ function displayTaskItem(status: ColumnStatus, wrapper: HTMLDivElement) {
   wrapper.innerHTML = selectedProject.board
     .getTasksByStatus(status)
     .map(task => `
-      <div class="task-item" data-id="${task.id}">
-        <strong>${task.title}</strong>
-        <p>${task.description || 'No description provided.'}</p>
-        <button class="delete-task-btn btn btn-secondary" style="align-self: flex-end; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; border: none; background: transparent;" data-id="${task.id}" title="Delete Task">
-          <i class="fa-solid fa-trash-can"></i>
-        </button>
-      </div>
+        <div class="task-item" draggable="true" data-id="${task.id}">
+            <strong>${task.title}</strong>
+            <p>${task.description || 'No description provided.'}</p>
+            <button class="delete-task-btn btn btn-secondary" style="align-self: flex-end; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; border: none; background: transparent;" data-id="${task.id}" title="Delete Task">
+            <i class="fa-solid fa-trash-can"></i>
+            </button>
+        </div>
     `).join("");
+    
 }
+
+let draggedTaskElement: HTMLElement | null = null;
+
+function setupDragAndDrop() {
+  const columns = [
+    { wrapper: toDoWrapper, status: "todo" as ColumnStatus },
+    { wrapper: inProgressWrapper, status: "in-progress" as ColumnStatus },
+    { wrapper: reviewWrapper, status: "review" as ColumnStatus },
+    { wrapper: doneWrapper, status: "done" as ColumnStatus }
+  ];
+
+  columns.forEach(({ wrapper, status }) => {
+
+    wrapper.addEventListener("dragover", (e) => {
+        console.log(e)
+      e.preventDefault(); // REQUIRED
+    });
+
+    wrapper.addEventListener("drop", (e) => {
+      e.preventDefault();
+
+      if (!selectedProject) return;
+
+      const id = Number(
+        e.dataTransfer?.getData("text/plain") ||
+        draggedTaskElement?.dataset.id
+      );
+
+      if (!id) return;
+
+      selectedProject.board.updateTaskStatus(id, status);
+
+
+      draggedTaskElement = null;
+
+      render();
+      showToast("Task Moved", `Moved to ${status}`);
+    });
+  });
+}
+
+document.addEventListener("dragstart", (e) => {
+  const el = (e.target as HTMLElement).closest(".task-item") as HTMLElement;
+  
+  if (!el) return;
+
+  draggedTaskElement = el;
+
+  e.dataTransfer?.setData("text/plain", el.dataset.id || "");
+  e.dataTransfer!.effectAllowed = "move";
+});
 
 //Reponsible for re-rendering elements when there's an upate in the DOM
 function render() {
@@ -351,6 +403,7 @@ function setupEventListeners() {
   taskCreationEvents();
   taskBoardsEvent();
   viewAndEditTaskEvent();
+  setupDragAndDrop();
 
   mainContent.onclick = (e) =>{
     sidebar.classList.remove('open')

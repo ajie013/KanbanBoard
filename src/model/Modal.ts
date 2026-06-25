@@ -16,8 +16,6 @@ export class Modal {
   }
 
   open = (data: Task | null =  null) =>{
-    console.log(this.modalElement)
-    console.log(this.overlayElement)
     this.modalElement?.classList.add("show");
     this.overlayElement?.classList.add("show");
 
@@ -28,11 +26,9 @@ export class Modal {
     this.modalElement?.classList.remove("show");
     this.overlayElement?.classList.remove("show");
     
-    // Run any custom logic registered for when this modal closes
     this.onCloseCallbacks.forEach(callback => callback());
   }
 
-  // Helper to register custom actions (like clearing inputs or loading data)
   onOpen(callback: (data: Task | null) => void) {
     this.onOpenCallbacks.push(callback);
   }
