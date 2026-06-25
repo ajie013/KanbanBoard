@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Workspace</title>
+  <script type="module" crossorigin src="/KanbanBoardApp/assets/index-C1iz-oIc.js"></script>
+  <link rel="stylesheet" crossorigin href="/KanbanBoardApp/assets/index-BfOyG-qU.css">
+</head>
+<body>
+
+  <!-- TOAST -->
+  <div class="toast-wrapper">
+    <button class="toast-close"><i class="fa-solid fa-x"></i></button>
+    <div class="toast-icon">✓</div>
+
+    <div class="toast-body">
+      <h4 class="toast-title">Success</h4>
+      <p class="toast-content">asdasdasd</p>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <button id="hamburger" title="Toggle Sidebar"><i class="fa-solid fa-bars"></i></button>
+    <div class="app-logo"><i class="fa-solid fa-square-kanban"></i> Workspace</div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-close"><i class="fa-solid fa-x"></i></button>
+    <div class="sidebar-header">
+      <h3><i class="fa-solid fa-folder-tree"></i> Projects</h3>
+    </div>
+    <button class="addProjectBtn btn"><i class="fa-solid fa-plus"></i> Add Project</button>
+    <div id="projectList"></div>
+  </aside>
+
+  <!-- ADD PROJECT MODAL -->
+  <div class="modal-overlay" id="modalOverlay"></div>
+  <div class="modal" id="projectModal">
+    <div class="modal-content">
+      <h2><i class="fa-solid fa-folder-plus"></i> Add Project</h2>
+      <input type="text" id="projectName" placeholder="Project name" />
+      <div class="modal-actions">
+        <button id="cancelProject" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Cancel</button>
+        <button id="saveProject" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main-content"> 
+    <div class="no-project">
+      <div class="empty-state-icon"><i class="fa-solid fa-folder-open"></i></div>
+      <p>No active project selected</p>
+      <button class="addProjectBtn btn"><i class="fa-solid fa-plus"></i> Add project</button>
+    </div>
+
+    <div class="project-list"></div>
+
+    <!-- BOARD -->
+    <div id="board" class="board hidden">
+      <div class="board-header">
+        <div class="board-header-left">
+          <button id="backBtn" class="btn btn-icon" title="Go Back"><i class="fa-solid fa-arrow-left"></i></button>
+          <h2 id="boardTitle"></h2>
+        </div>
+        <button class="add-task-btn btn btn-primary"><i class="fa-solid fa-plus"></i> Add Task</button>
+      </div>
+
+      <div class="board-columns">
+        <div class="column todo">
+          <div class="column-header">
+            <span><i class="fa-solid fa-circle-list status-todo"></i> Todo</span>
+          </div>
+          <div class="task-list"></div>
+        </div>
+
+        <div class="column in-progress">
+          <div class="column-header">
+            <span><i class="fa-solid fa-spinner fa-spin-pulse status-progress"></i> In Progress</span>
+          </div>
+          <div class="task-list"></div>
+        </div>
+
+        <div class="column review">
+          <div class="column-header">
+            <span><i class="fa-solid fa-eye status-review"></i> Review</span>
+          </div>
+          <div class="task-list"></div>
+        </div>
+
+        <div class="column done">
+          <div class="column-header">
+            <span><i class="fa-solid fa-circle-check status-done"></i> Done</span>
+          </div>
+          <div class="task-list"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ADD TASK MODAL -->
+  <div class="modal-overlay" id="taskOverlay"></div>
+  <div class="modal" id="taskModal">
+    <div class="modal-content">
+      <h2><i class="fa-solid fa-square-plus"></i> Add New Task</h2>
+      <input type="text" id="taskTitle" placeholder="Task title" />
+      <textarea id="taskDescription" placeholder="Task description"></textarea>
+      <div class="modal-actions">
+        <button id="cancelTask" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Cancel</button>
+        <button id="saveTask" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW AND UPDATE MODAL -->
+  <div class="modal-overlay" id="taskViewOverlay"></div>
+  <div class="modal" id="taskViewModal">
+    <div class="modal-content">
+      <div id="taskViewMode">
+        <h2 id="viewTaskTitle"></h2>
+        <p id="viewTaskDescription" class="view-task-desc"></p>
+        <div class="modal-actions">
+          <button id="editTaskBtn" class="btn btn-secondary"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+          <button id="closeTaskView" class="btn btn-primary"><i class="fa-solid fa-xmark"></i> Close</button>
+        </div>
+      </div>
+      <div id="taskEditMode" class="hidden">
+        <h2><i class="fa-solid fa-pen-to-square"></i> Edit Task</h2>
+        <input type="text" id="editTaskTitle" />
+        <textarea id="editTaskDescription"></textarea>
+        <div class="modal-actions">
+          <button id="cancelEditTask" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Cancel</button>
+          <button id="saveEditTask" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://kit.fontawesome.com/3e9532b4cf.js" crossorigin="anonymous"></script>
+
+</body>
+</html>
