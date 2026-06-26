@@ -20,7 +20,6 @@ export default class Toast{
     }
 
     showToast = (title: string, content: string) =>{
-        console.log(this.toastWrapper)
         this.toastWrapper.style.display = "block"
         this.toastTitle.innerHTML = title;
         this.toastContent.innerHTML = content;

@@ -45,6 +45,7 @@ export const displayTaskItem = ( status: ColumnStatus, wrapper: HTMLDivElement, 
 }
 
 interface ElementType{
+    projectGuide: HTMLDivElement,
     noProjectWrapper: HTMLDivElement;
     projectListWrapper: HTMLDivElement;
     projectListWrapperSide: HTMLDivElement;
@@ -63,7 +64,7 @@ export const render = (projectList: Project[], selectedProject: Project | null, 
     elements.noProjectWrapper.style.display = "block";
     elements.projectListWrapper.innerHTML = "";
     elements.board.classList.add("hidden");
-
+    elements.projectGuide.classList.remove("hidden");
     return;
   }
 
@@ -71,7 +72,8 @@ export const render = (projectList: Project[], selectedProject: Project | null, 
     elements.noProjectWrapper.style.display = "none";
     elements.projectListWrapper.classList.remove("hidden");
     elements.board.classList.add("hidden");
-
+    elements.projectGuide.classList.remove("hidden");
+    
     elements.projectListWrapper.innerHTML = projectList
       .map(
         p => `
@@ -94,7 +96,7 @@ export const render = (projectList: Project[], selectedProject: Project | null, 
 
   elements.noProjectWrapper.style.display = "none";
   elements.projectListWrapper.innerHTML = "";
-
+  elements.projectGuide.classList.add("hidden");
   elements.board.classList.remove("hidden");
   elements.boardTitle.textContent = selectedProject.name;
 

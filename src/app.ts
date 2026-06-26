@@ -13,7 +13,8 @@ let selectedProject: Project | null = null;
 let currentTask: Task | null = null;
 let draggedTaskElement: HTMLElement | null = null;
 
-// DOM ELEMENTS
+// DOM ELEMENTS\
+const projectGuide = document.querySelector(".project-guide") as HTMLDivElement;
 const sidebar = document.getElementById("sidebar") as HTMLDivElement;
 const hamburger = document.getElementById("hamburger") as HTMLButtonElement;
 const closeBtn = document.querySelector('.sidebar-close') as HTMLButtonElement;
@@ -59,6 +60,7 @@ const taskViewMode = document.getElementById("taskViewMode") as HTMLDivElement;
 const taskEditMode = document.getElementById("taskEditMode") as HTMLDivElement;
 
 const ui = {
+  projectGuide,
   noProjectWrapper,
   projectListWrapper,
   projectListWrapperSide,
@@ -201,7 +203,6 @@ const setupDragAndDropeEvent = () => {
       draggedTaskElement = null;
 
       render(projectList, selectedProject, ui);
-      toast.showToast("Task Moved", `Moved to ${status}`);
     });
   });
 }
@@ -308,7 +309,7 @@ const viewAndEditTaskEvent = () => {
   saveEditBtn.addEventListener("click", onUpdateTask)
 }
 
-/* GLOBAL EVENT DELEGATION & LISTENERS */
+//Global Event
 const setupEventListeners = () => {
   sideBarEvent();
   projectListMainEvents();
