@@ -24,22 +24,22 @@ export const displayTaskItem = ( status: ColumnStatus, wrapper: HTMLDivElement, 
   wrapper.innerHTML = selectedProject.board
     .getTasksByStatus(status)
     .map(
-      task => `
-      <div class="task-item" draggable="true" data-id="${task.id}">
-        <strong>${task.title}</strong>
-        <p>${task.description || "No description provided."}</p>
+      task => {
+        return `<div class="task-item" draggable="true" data-id="${task.id}">
+          <strong>${task.id} ${task.title}</strong>
+          <p>${task.description || "No description provided."}</p>
 
-        <button
-          class="delete-task-btn btn btn-secondary"
-          style="align-self:flex-end;padding:.25rem .5rem;font-size:.75rem;border-radius:4px;border:none;background:transparent;"
-          data-id="${task.id}"
-          title="Delete Task">
+          <button
+            class="delete-task-btn btn btn-secondary"
+            style="align-self:flex-end;padding:.25rem .5rem;font-size:.75rem;border-radius:4px;border:none;background:transparent;"
+            data-id="${task.id}"
+            title="Delete Task">
 
-          <i class="fa-solid fa-trash-can"></i>
+            <i class="fa-solid fa-trash-can"></i>
 
-        </button>
-      </div>
-    `
+          </button>
+        </div>`
+     }
     )
     .join("");
 }

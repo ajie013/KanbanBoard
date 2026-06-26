@@ -2,11 +2,14 @@ import { ColumnStatus, Task } from "../types/Task.js";
 
 export default class KanbanBoard{
     private tasks: Task[] = []
+    private id: number = 1;
 
-    addTask = (title: string, description: string): void => {
+    addTask(title: string, description: string): void {
         try {
+            if(!title.trim()) throw new Error("Title cannot be empty.");
+            
             const newTask: Task ={
-                id: this.tasks.length + 1 + Date.now(),
+                id: this.id++,
                 title,
                 description,
                 status: 'todo'
@@ -14,17 +17,19 @@ export default class KanbanBoard{
 
             this.tasks.push(newTask)
         } catch (ex) {
-            console.log("Something went wrong")
+            if(ex instanceof Error){
+                console.error(ex.message)
+            }
         }
     }
 
     getTasksByStatus = (status: ColumnStatus): ReadonlyArray<Task> => this.tasks.filter((task) => task.status === status)
     
 
-    getAllTasks = (): ReadonlyArray<Task> => this.tasks
+    getAllTasks = (): ReadonlyArray<Task> => [...this.tasks]
     
 
-    updateTaskStatus = (id: number, newStatus: ColumnStatus): void => {
+    updateTaskStatus(id: number, newStatus: ColumnStatus): void {
         const task = this.tasks.find((task) => task.id === id)
 
         if (!task) return;
@@ -32,21 +37,18 @@ export default class KanbanBoard{
         task.status = newStatus
     }
 
-    updateTaskDetails = (id: number, updates: Partial<Task>): void => {
+    updateTaskDetails(id: number, updates: Partial<Task>): void {
+        const {title, description} = updates
+
         const task = this.tasks.find((task) => task.id === id)
 
         if (!task) return;
 
-       if(updates.description != undefined){
-            task.description = updates.description
-       }
-
-       if(updates.title != undefined){
-            task.title = updates.title
-       }
+        task.title = title ?? task.title;
+        task.description = description ?? task.description;
     }
 
-    deleteTask = (id: number): void => {
+    deleteTask (id: number): void {
         this.tasks = this.tasks.filter(task => task.id !== id)
     }
 }
