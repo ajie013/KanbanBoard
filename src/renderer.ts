@@ -18,30 +18,33 @@ export const displayProjectsSideBar = (projectList: Project[], selectedProject: 
   }).join("");
 }
 
-export const displayTaskItem = ( status: ColumnStatus, wrapper: HTMLDivElement, selectedProject: Project | null) => {
+export const displayTaskItem = (status: ColumnStatus, wrapper: HTMLDivElement, selectedProject: Project | null) => {
   if (!selectedProject) return;
 
-  wrapper.innerHTML = selectedProject.board
-    .getTasksByStatus(status)
-    .map(
-      task => {
-        let title = task.title.length > 25 ? task.title.substring(0, 23) + "..." : task.title
-        return `<div class="task-item" draggable="true" data-id="${task.id}">
-          <strong>${title}</strong>
+  const tasks = selectedProject.board.getTasksByStatus(status);
+  const countBadge = document.getElementById(`${status}-count`);
+  
+  if (countBadge) countBadge.textContent = tasks.length.toString();
+
+  wrapper.innerHTML = tasks
+    .map(task => {
+      let title = task.title.length > 35 ? task.title.substring(0, 32) + "..." : task.title;
+      
+      return `
+        <div class="task-item" draggable="true" data-id="${task.id}">
+          <div class="task-item-header">
+            <strong>${title}</strong>
+            <button
+              class="delete-task-btn"
+              data-id="${task.id}"
+              title="Delete Task">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
           <p>${task.description || "No description provided."}</p>
-
-          <button
-            class="delete-task-btn btn btn-secondary"
-            style="align-self:flex-end;padding:.25rem .5rem;font-size:.75rem;border-radius:4px;border:none;background:transparent;"
-            data-id="${task.id}"
-            title="Delete Task">
-
-            <i class="fa-solid fa-trash-can"></i>
-
-          </button>
-        </div>`
-     }
-    )
+        </div>
+      `;
+    })
     .join("");
 }
 

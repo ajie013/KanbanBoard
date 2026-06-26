@@ -216,8 +216,19 @@ const setupDragAndDropeEvent = () => {
       e.preventDefault();
     });
 
+    wrapper.addEventListener("dragenter", (e) => {
+      e.preventDefault();
+      wrapper.classList.add("drag-over");
+    });
+
+    wrapper.addEventListener("dragleave", () => {
+      wrapper.classList.remove("drag-over");
+    });
+
     wrapper.addEventListener("drop", (e) => {
       e.preventDefault();
+      
+      wrapper.classList.remove("drag-over");
 
       if (!selectedProject) return;
 

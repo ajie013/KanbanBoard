@@ -304,18 +304,21 @@ body {
   font-size: 1.1rem;
 }
 
-/* Kanban Board */
+/* Kanban Board Container */
 .board-header {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap; 
-  gap: 0.5rem; 
-  margin-bottom: 1rem;
+  gap: 1rem; 
+  margin-bottom: 1.5rem;
   align-items: center; 
 }
 
-.board-header #boardTitle{
-  font-size: 1rem;
+.board-header #boardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
 }
 
 .board-header .add-task-btn {
@@ -328,80 +331,91 @@ body {
   gap: 1rem;
 }
 
+/* Columns Grid Layout */
 .board-columns {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  gap: 1rem;
   align-items: stretch;
 }
 
 .column {
-  background: var(--column-bg);
+  background: var(--column-bg, #f4f5f7);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  max-height: 80vh;
-  min-height: 60vh;
-
-  display: flex;
-  flex-direction: column;
-  min-height: 60vh;
-  height: 80vh;
+  height: 78vh;
+  max-height: 800px;
+  border-top: 4px solid transparent; /* Fallback */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Accent Column Border Tops */
+.column.todo { border-top-color: var(--todo-color, #4f46e5); }
+.column.in-progress { border-top-color: var(--progress-color, #0ea5e9); }
+.column.review { border-top-color: var(--review-color, #f59e0b); }
+.column.done { border-top-color: var(--done-color, #10b981); }
+
+/* Column Headers */
 .column-header {
+  padding: 0.5rem 0.25rem 1rem 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.column-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 0.25rem 0.25rem 0.75rem 0.25rem;
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  color: var(--text-main);
+  font-size: 0.9rem;
+  color: var(--text-main, #1e293b);
 }
 
-.column-header span {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* Modern Task Count Badge */
+.column-count {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-muted, #64748b);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
 }
 
-.status-todo { color: var(--todo-color); }
-.status-progress { color: var(--progress-color); }
-.status-review { color: var(--review-color); }
-.status-done { color: var(--done-color); }
+/* Status Icon Coloring */
+.status-todo { color: var(--todo-color, #4f46e5); }
+.status-progress { color: var(--progress-color, #0ea5e9); }
+.status-review { color: var(--review-color, #f59e0b); }
+.status-done { color: var(--done-color, #10b981); }
 
+/* Task Dropzone / List Wrapper */
 .task-list {
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  flex-grow: 1;
-  overflow-y: auto;
-  padding-right: 2px;
   flex: 1;
+  overflow-y: auto;
+  padding: 0.25rem;
   scrollbar-width: thin;
-  min-height: 120px;
 }
 
-/* Task Item Components */
+/* Professional Card Items */
 .task-item {
-  background: var(--bg-card);
+  background: var(--bg-card, #ffffff);
   padding: 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.task-item {
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: grab;
   overflow-wrap: break-word; 
   word-break: break-word; 
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .task-item:active {
@@ -410,44 +424,66 @@ body {
 
 .task-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-hover, #cbd5e1);
+}
+
+/* Task Layout Headers */
+.task-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .task-item strong {
-  display: block;  
-  font-size: 0.95rem;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  color: var(--text-main);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-main, #1e293b);
 }
 
 .task-item p {
-  font-size: 0.65rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-muted, #626d7c);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  overflow-wrap: break-word;
-  word-break: break-word;
   overflow: hidden;
+  margin: 0;
 }
 
+/* Inline Clean Action Buttons */
 .delete-task-btn {
-  align-self: flex-end;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-muted, #94a3b8);
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  padding: 0.2rem 0.5rem;
+  padding: 4px;
   border-radius: 4px;
-  margin-top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
 .delete-task-btn:hover {
   background: #fee2e2;
-  color: var(--danger);
+  color: #ef4444;
+}
+
+.task-list.drag-over {
+  background: rgba(0, 0, 0, 0.02) !important;
+  outline: 2px dashed rgba(0, 0, 0, 0.15) !important;
+  outline-offset: -4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.task-item:active {
+  opacity: 0.4;
 }
 
 /* Overlay & Modal Window System */
