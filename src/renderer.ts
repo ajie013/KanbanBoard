@@ -2,20 +2,20 @@ import { Project } from "./types/Project.js";
 import { ColumnStatus } from "./types/Task.js";
 
 export const displayProjectsSideBar = (projectList: Project[], selectedProject: Project | null, projectListWrapperSide: HTMLDivElement) => {
-  projectListWrapperSide.innerHTML = projectList
-    .map(
-      p => `
+  projectListWrapperSide.innerHTML = projectList.map( p =>{
+    let name = p.name.length > 20 ? p.name.substring(0,18) + "..." : p.name;
+
+    return `
       <div class="project-item sidebar-item ${
         selectedProject?.id === p.id ? "active" : ""
       }" data-id="${p.id}">
         <span>
           <i class="fa-solid fa-folder" style="color: var(--primary); margin-right: 6px;"></i>
-          ${p.name}
+          ${name}
         </span>
       </div>
     `
-    )
-    .join("");
+  }).join("");
 }
 
 export const displayTaskItem = ( status: ColumnStatus, wrapper: HTMLDivElement, selectedProject: Project | null) => {
@@ -76,11 +76,13 @@ export const render = (projectList: Project[], selectedProject: Project | null, 
     
     elements.projectListWrapper.innerHTML = projectList
       .map(
-        p => `
-      <div class="project-item" data-id="${p.id}">
+        p => {
+      let name = p.name.length > 15 ? p.name.substring(0,12) + "..." : p.name;
+      return  `
+      <div class="project-item" data-id="${p.id}" title="${p.name}">
         <span>
           <i class="fa-solid fa-folder" style="color: var(--primary); margin-right:8px;"></i>
-          ${p.name}
+          ${name}
         </span>
 
         <button class="delete-project-btn" data-id="${p.id}">
@@ -88,7 +90,7 @@ export const render = (projectList: Project[], selectedProject: Project | null, 
         </button>
       </div>
     `
-      )
+  })
       .join("");
 
     return;

@@ -6,13 +6,36 @@ import Toast from "./components/Toast.js";
 import {render} from './renderer.js'
 
 let projectList: Project[] = [
-  { id: 1, name: "Default Project", board: new KanbanBoard() }
+  { id: 1, name: "Default Project", board: new KanbanBoard() },
+  { id: 2, name: "Leave Management System", board: new KanbanBoard() }
 ];
+
+
 
 let selectedProject: Project | null = null;
 let currentTask: Task | null = null;
 let draggedTaskElement: HTMLElement | null = null;
 
+
+const addDefaultValue = () => {
+  const defaultProject = projectList.find(project => project.id === 1);
+
+  const leaveManagement = projectList.find(project => project.id === 1);
+  
+  if (defaultProject) {
+    defaultProject.board.addTask("Set up project", "Create the initial project structure.");
+    defaultProject.board.addTask("Design homepage","Build the homepage UI.");
+    defaultProject.board.addTask("Deploy","Deploy the application.");
+  }
+
+  if (leaveManagement) {
+    leaveManagement.board.addTask("Employee Login","Implement employee authentication.");
+    leaveManagement.board.addTask("Leave Request Form","Allow employees to submit leave requests.");
+    leaveManagement.board.addTask("Manager Approval","Managers can approve or reject requests.");
+  }
+};
+
+addDefaultValue();
 // DOM ELEMENTS\
 const projectGuide = document.querySelector(".project-guide") as HTMLDivElement;
 const sidebar = document.getElementById("sidebar") as HTMLDivElement;
