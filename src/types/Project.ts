@@ -1,4 +1,4 @@
-import KanbanBoard from "../model/KanbanBoard.js";
+import KanbanBoard from "../models/KanbanBoard.js";
 
 export interface Project {
   id: number;

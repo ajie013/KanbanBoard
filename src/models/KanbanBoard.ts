@@ -1,11 +1,9 @@
 import { ColumnStatus, Task } from "../types/Task.js";
 
 export default class KanbanBoard{
-    private tasks: Task[] = [
-        
-    ]
+    private tasks: Task[] = []
 
-    addTask(title: string, description: string): void {
+    addTask = (title: string, description: string): void => {
         try {
             const newTask: Task ={
                 id: this.tasks.length + 1 + Date.now(),
@@ -18,18 +16,15 @@ export default class KanbanBoard{
         } catch (ex) {
             console.log("Something went wrong")
         }
-      
     }
 
-    getTasksByStatus(status: ColumnStatus): ReadonlyArray<Task>{
-        return this.tasks.filter((task) => task.status === status)
-    }
+    getTasksByStatus = (status: ColumnStatus): ReadonlyArray<Task> => this.tasks.filter((task) => task.status === status)
+    
 
-    getAllTasks(): ReadonlyArray<Task>{
-        return this.tasks
-    }
+    getAllTasks = (): ReadonlyArray<Task> => this.tasks
+    
 
-    updateTaskStatus(id: number, newStatus: ColumnStatus): void{
+    updateTaskStatus = (id: number, newStatus: ColumnStatus): void => {
         const task = this.tasks.find((task) => task.id === id)
 
         if (!task) return;
@@ -37,7 +32,7 @@ export default class KanbanBoard{
         task.status = newStatus
     }
 
-    updateTaskDetails(id: number, updates: Partial<Task>): void{
+    updateTaskDetails = (id: number, updates: Partial<Task>): void => {
         const task = this.tasks.find((task) => task.id === id)
 
         if (!task) return;
@@ -51,7 +46,7 @@ export default class KanbanBoard{
        }
     }
 
-    deleteTask(id: number): void{
+    deleteTask = (id: number): void => {
         this.tasks = this.tasks.filter(task => task.id !== id)
     }
 }

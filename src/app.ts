@@ -1,7 +1,9 @@
-import KanbanBoard from "./model/KanbanBoard.js";
-import { Modal } from "./model/Modal.js";
+import KanbanBoard from "./models/KanbanBoard.js";
+import { Modal } from "./components/Modal.js";
 import { Project } from "./types/Project.js";
 import { ColumnStatus, Task } from "./types/Task.js";
+import Toast from "./components/Toast.js";
+import {render} from './renderer.js'
 
 let projectList: Project[] = [
   { id: 1, name: "Default Project", board: new KanbanBoard() }
@@ -9,6 +11,7 @@ let projectList: Project[] = [
 
 let selectedProject: Project | null = null;
 let currentTask: Task | null = null;
+let draggedTaskElement: HTMLElement | null = null;
 
 // DOM ELEMENTS
 const sidebar = document.getElementById("sidebar") as HTMLDivElement;
@@ -21,12 +24,6 @@ const board = document.getElementById("board") as HTMLDivElement;
 const boardTitle = document.getElementById("boardTitle") as HTMLHeadingElement;
 const backBtn = document.getElementById("backBtn") as HTMLButtonElement;
 const mainContent = document.querySelector('.main-content') as HTMLDivElement;
-
-//TOAST
-const toastWrapper = document.querySelector('.toast-wrapper') as HTMLDivElement;
-const toastTitle = document.querySelector('.toast-title') as HTMLDivElement;
-const toastContent = document.querySelector('.toast-content') as HTMLDivElement;
-const toastClose = document.querySelector('.toast-close') as HTMLDivElement;
 
 // TASK WRAPPERS
 const toDoWrapper = document.querySelector(".todo .task-list") as HTMLDivElement;
@@ -61,10 +58,25 @@ const saveEditBtn = document.getElementById("saveEditTask") as HTMLButtonElement
 const taskViewMode = document.getElementById("taskViewMode") as HTMLDivElement;
 const taskEditMode = document.getElementById("taskEditMode") as HTMLDivElement;
 
+const ui = {
+  noProjectWrapper,
+  projectListWrapper,
+  projectListWrapperSide,
+  board,
+  boardTitle,
+  toDoWrapper,
+  inProgressWrapper,
+  reviewWrapper,
+  doneWrapper,
+};
+
 //Modal instance
 const projectModal = new Modal("projectModal", "modalOverlay");
 const taskModal = new Modal("taskModal", "taskOverlay" );
 const viewModal = new Modal("taskViewModal", "taskViewOverlay");
+
+//Toast instance
+const toast = new Toast(".toast-wrapper", ".toast-title", ".toast-content", ".toast-close")
 
 projectModal.onClose(() =>{
     projectNameInput.value = "";
@@ -88,54 +100,77 @@ viewModal.onClose(() => {
   taskEditMode.classList.add("hidden");
 })
 
-const showToast = (title: string, content: string) =>{
-  toastWrapper.style.display = "block"
-  toastTitle.innerHTML = title;
-  toastContent.innerHTML = content;
+//PROJECT OPERATIONS
+const addProject = () =>{
+  const name = projectNameInput.value.trim();
 
-  setTimeout(() => {
-    toastWrapper.style.display = "none"
-    toastContent.innerHTML = "";
-    toastTitle.innerHTML = ""
-  }, 2000);
+  if (!name) return;
+
+  projectList.push({ id: Date.now(), name, board: new KanbanBoard() });
+
+  projectModal.close();
+  sidebar.classList.remove('open');
+  render(projectList, selectedProject, ui);
+
+  toast.showToast("Project Created", "The project was created successfully.")
 }
 
-toastClose.addEventListener("click", () =>{
-  toastWrapper.style.display = "none"
-  toastContent.innerHTML = "";
-  toastTitle.innerHTML = ""
-})
+const deleteProject = (projectId: number) =>{
+  projectList = projectList.filter(p => p.id !== projectId);
 
-//Render projects on sidebar
-function displayProjectsSideBar() {
-  projectListWrapperSide.innerHTML = projectList.map(p => `
-    <div class="project-item sidebar-item ${selectedProject?.id === p.id ? 'active' : ''}" data-id="${p.id}">
-      <span><i class="fa-solid fa-folder" style="color: var(--primary); margin-right: 6px;"></i> ${p.name}</span>
-    </div>
-  `).join("");
+  if (selectedProject?.id === projectId) selectedProject = null;
+
+  render(projectList, selectedProject, ui);
+  toast.showToast("Project Deleted", "The project was removed successfully.")
 }
 
-//Render task items on each board
-function displayTaskItem(status: ColumnStatus, wrapper: HTMLDivElement) {
+//TASK OPERATIONS
+const onAddTask = () =>{
   if (!selectedProject) return;
 
-  wrapper.innerHTML = selectedProject.board
-    .getTasksByStatus(status)
-    .map(task => `
-        <div class="task-item" draggable="true" data-id="${task.id}">
-            <strong>${task.title}</strong>
-            <p>${task.description || 'No description provided.'}</p>
-            <button class="delete-task-btn btn btn-secondary" style="align-self: flex-end; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; border: none; background: transparent;" data-id="${task.id}" title="Delete Task">
-            <i class="fa-solid fa-trash-can"></i>
-            </button>
-        </div>
-    `).join("");
-    
+  const title = taskTitleInput.value.trim();
+  const desc = taskDescInput.value.trim();
+
+  if (!title) return;
+
+  selectedProject.board.addTask(title, desc);
+  
+  taskModal.close()
+  render(projectList, selectedProject, ui);
+
+  toast.showToast("Task Added", "The task was added successfully.")
 }
 
-let draggedTaskElement: HTMLElement | null = null;
+const onUpdateTask = () =>{
+  if (!selectedProject || !currentTask) return;
+  
+  const updatedTitle = editTitle.value.trim();
+  if (!updatedTitle) return; 
 
-function setupDragAndDrop() {
+  selectedProject.board.updateTaskDetails(currentTask.id, {
+    title: updatedTitle,
+    description: editDesc.value.trim()
+  });
+
+  viewModal.close(); 
+  render(projectList, selectedProject, ui);
+  toast.showToast("Task Updated", "The task was updated successfully.")
+}
+
+const onDeleteTask = (taskId: number) =>{
+  selectedProject?.board.deleteTask(taskId);
+
+  render(projectList, selectedProject, ui);
+  toast.showToast("Task Deleted", "The task was removed successfully.")
+}
+
+//SideBar events
+const sideBarEvent= () =>{
+  hamburger.addEventListener("click", () => sidebar.classList.toggle("open"));
+  closeBtn.addEventListener("click", () => sidebar.classList.remove("open"));
+}
+
+const setupDragAndDropeEvent = () => {
   const columns = [
     { wrapper: toDoWrapper, status: "todo" as ColumnStatus },
     { wrapper: inProgressWrapper, status: "in-progress" as ColumnStatus },
@@ -146,8 +181,7 @@ function setupDragAndDrop() {
   columns.forEach(({ wrapper, status }) => {
 
     wrapper.addEventListener("dragover", (e) => {
-        console.log(e)
-      e.preventDefault(); // REQUIRED
+      e.preventDefault();
     });
 
     wrapper.addEventListener("drop", (e) => {
@@ -164,132 +198,12 @@ function setupDragAndDrop() {
 
       selectedProject.board.updateTaskStatus(id, status);
 
-
       draggedTaskElement = null;
 
-      render();
-      showToast("Task Moved", `Moved to ${status}`);
+      render(projectList, selectedProject, ui);
+      toast.showToast("Task Moved", `Moved to ${status}`);
     });
   });
-}
-
-document.addEventListener("dragstart", (e) => {
-  const el = (e.target as HTMLElement).closest(".task-item") as HTMLElement;
-  
-  if (!el) return;
-
-  draggedTaskElement = el;
-
-  e.dataTransfer?.setData("text/plain", el.dataset.id || "");
-  e.dataTransfer!.effectAllowed = "move";
-});
-
-//Reponsible for re-rendering elements when there's an upate in the DOM
-function render() {
-  displayProjectsSideBar();
-
-  if (projectList.length === 0) {
-    noProjectWrapper.style.display = "block";
-    projectListWrapper.innerHTML = "";
-    board.classList.add("hidden");
-    return;
-  }
-
-  if (!selectedProject) {
-    noProjectWrapper.style.display = "none";
-    projectListWrapper.classList.remove("hidden");
-    board.classList.add("hidden");
-
-    projectListWrapper.innerHTML = projectList.map(p => `
-      <div class="project-item" data-id="${p.id}">
-        <span><i class="fa-solid fa-folder" style="color: var(--primary); margin-right: 8px;"></i> ${p.name}</span>
-        <button class="delete-project-btn" data-id="${p.id}" title="Delete Project">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </div>
-    `).join("");
-    return;
-  }
-
-  noProjectWrapper.style.display = "none";
-  projectListWrapper.innerHTML = "";
-  board.classList.remove("hidden");
-  boardTitle.textContent = selectedProject.name;
-
-  displayTaskItem("todo", toDoWrapper);
-  displayTaskItem("in-progress", inProgressWrapper);
-  displayTaskItem("review", reviewWrapper);
-  displayTaskItem("done", doneWrapper);
-}
-
-//Related events for SideBar
-const sideBarEvent= () =>{
-  hamburger.addEventListener("click", () => sidebar.classList.toggle("open"));
-  closeBtn.addEventListener("click", () => sidebar.classList.remove("open"));
-}
-
-//PROJECT OPERATION
-const addProject = () =>{
-  const name = projectNameInput.value.trim();
-
-  if (!name) return;
-
-  projectList.push({ id: Date.now(), name, board: new KanbanBoard() });
-
-  projectModal.close();
-  sidebar.classList.remove('open');
-  render();
-
-  showToast("Project Created", "The project was created successfully.")
-}
-
-const deleteProject = (projectId: number) =>{
-  projectList = projectList.filter(p => p.id !== projectId);
-
-  if (selectedProject?.id === projectId) selectedProject = null;
-
-  render();
-  showToast("Project Deleted", "The project was removed successfully.")
-}
-
-//TASK OPERATIONS
-const onAddTask = () =>{
-  if (!selectedProject) return;
-
-  const title = taskTitleInput.value.trim();
-  const desc = taskDescInput.value.trim();
-
-  if (!title) return;
-
-  selectedProject.board.addTask(title, desc);
-  
-  taskModal.close()
-  render();
-
-  showToast("Task Added", "The task was added successfully.")
-}
-
-const onUpdateTask = () =>{
-  if (!selectedProject || !currentTask) return;
-  
-  const updatedTitle = editTitle.value.trim();
-  if (!updatedTitle) return; 
-
-  selectedProject.board.updateTaskDetails(currentTask.id, {
-    title: updatedTitle,
-    description: editDesc.value.trim()
-  });
-
-  viewModal.close(); 
-  render(); 
-  showToast("Task Updated", "The task was updated successfully.")
-}
-
-const onDeleteTask = (taskId: number) =>{
-  selectedProject?.board.deleteTask(taskId);
-
-  render();
-  showToast("Task Deleted", "The task was removed successfully.")
 }
 
 //For selecting a project inside the SideBar
@@ -301,7 +215,7 @@ const projectListSideEvents = () =>{
 
     const id = Number(projectEl.dataset.id);
     selectedProject = projectList.find(p => p.id === id) || null;
-    render();
+    render(projectList, selectedProject, ui);
   };
 }
 
@@ -368,7 +282,7 @@ const projectListMainEvents = () =>{
     }
 
     selectedProject = projectList.find(p => p.id === id) || null;
-    render();
+    render(projectList, selectedProject, ui);
   };
 }
 
@@ -395,7 +309,7 @@ const viewAndEditTaskEvent = () => {
 }
 
 /* GLOBAL EVENT DELEGATION & LISTENERS */
-function setupEventListeners() {
+const setupEventListeners = () => {
   sideBarEvent();
   projectListMainEvents();
   projectListSideEvents();
@@ -403,7 +317,7 @@ function setupEventListeners() {
   taskCreationEvents();
   taskBoardsEvent();
   viewAndEditTaskEvent();
-  setupDragAndDrop();
+  setupDragAndDropeEvent();
 
   mainContent.onclick = (e) =>{
     sidebar.classList.remove('open')
@@ -411,9 +325,21 @@ function setupEventListeners() {
   
   backBtn.addEventListener("click", () => {
     selectedProject = null;
-    render();
+    render(projectList, selectedProject, ui);
   });
+
+  document.addEventListener("dragstart", (e) => {
+    const el = (e.target as HTMLElement).closest(".task-item") as HTMLElement;
+    
+    if (!el) return;
+
+    draggedTaskElement = el;
+
+    e.dataTransfer?.setData("text/plain", el.dataset.id || "");
+    e.dataTransfer!.effectAllowed = "move";
+  });
+
 }
 
 setupEventListeners();
-render();
+render(projectList, selectedProject, ui);
