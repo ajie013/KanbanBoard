@@ -10,28 +10,27 @@ let projectList: Project[] = [
   { id: 2, name: "Leave Management System", board: new KanbanBoard() }
 ];
 
-
-
 let selectedProject: Project | null = null;
 let currentTask: Task | null = null;
 let draggedTaskElement: HTMLElement | null = null;
 
-
 const addDefaultValue = () => {
   const defaultProject = projectList.find(project => project.id === 1);
-
-  const leaveManagement = projectList.find(project => project.id === 1);
+  const leaveManagement = projectList.find(project => project.id === 2);
   
   if (defaultProject) {
     defaultProject.board.addTask("Set up project", "Create the initial project structure.");
     defaultProject.board.addTask("Design homepage","Build the homepage UI.");
     defaultProject.board.addTask("Deploy","Deploy the application.");
+    defaultProject.board.updateTaskStatus(1, "done")
+    defaultProject.board.updateTaskStatus(2, "review")
   }
 
   if (leaveManagement) {
     leaveManagement.board.addTask("Employee Login","Implement employee authentication.");
     leaveManagement.board.addTask("Leave Request Form","Allow employees to submit leave requests.");
     leaveManagement.board.addTask("Manager Approval","Managers can approve or reject requests.");
+    leaveManagement.board.updateTaskStatus(1, "review")
   }
 };
 
@@ -115,7 +114,7 @@ taskModal.onClose(() =>{
 viewModal.onOpen((task) => {
    if (!task) return;
    currentTask = task; 
-   viewTitle.textContent = task.title;
+   viewTitle.textContent = task.title.length > 30 ? task.title.substring(0,27) + "..." : task.title;
    viewDesc.textContent = task.description;
 })
 

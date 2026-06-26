@@ -25,8 +25,9 @@ export const displayTaskItem = ( status: ColumnStatus, wrapper: HTMLDivElement, 
     .getTasksByStatus(status)
     .map(
       task => {
+        let title = task.title.length > 25 ? task.title.substring(0, 23) + "..." : task.title
         return `<div class="task-item" draggable="true" data-id="${task.id}">
-          <strong>${task.id} ${task.title}</strong>
+          <strong>${title}</strong>
           <p>${task.description || "No description provided."}</p>
 
           <button
