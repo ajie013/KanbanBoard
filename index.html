@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kanban Workspace</title>
-  <script type="module" crossorigin src="/KanbanBoard/assets/index-CWAeRMl8.js"></script>
-  <link rel="stylesheet" crossorigin href="/KanbanBoard/assets/index-Bwz8ecbH.css">
+  <script type="module" crossorigin src="/KanbanBoard/assets/index-C3Y28XVS.js"></script>
+  <link rel="stylesheet" crossorigin href="/KanbanBoard/assets/index-ipAU9-7-.css">
 </head>
 <body>
   <!-- TOAST -->
@@ -69,44 +69,64 @@
 
     <!-- BOARD -->
     <div id="board" class="board hidden">
-      <div class="board-header">
-        <div class="board-header-left">
-          <button id="backBtn" class="btn btn-icon" title="Go Back"><i class="fa-solid fa-arrow-left"></i></button>
-          <h2 id="boardTitle"></h2>
-        </div>
-        <button class="add-task-btn btn btn-primary"><i class="fa-solid fa-plus"></i> Add Task</button>
-      </div>
-
-      <div class="board-columns">
-        <div class="column todo">
-          <div class="column-header">
-            <span><i class="fa-solid fa-circle-list status-todo"></i> Todo</span>
-          </div>
-          <div class="task-list"></div>
-        </div>
-
-        <div class="column in-progress">
-          <div class="column-header">
-            <span><i class="fa-solid fa-spinner fa-spin-pulse status-progress"></i> In Progress</span>
-          </div>
-          <div class="task-list"></div>
-        </div>
-
-        <div class="column review">
-          <div class="column-header">
-            <span><i class="fa-solid fa-eye status-review"></i> Review</span>
-          </div>
-          <div class="task-list"></div>
-        </div>
-
-        <div class="column done">
-          <div class="column-header">
-            <span><i class="fa-solid fa-circle-check status-done"></i> Done</span>
-          </div>
-          <div class="task-list"></div>
-        </div>
-      </div>
+  <div class="board-header">
+    <div class="board-header-left">
+      <button id="backBtn" class="btn btn-icon" title="Go Back"><i class="fa-solid fa-arrow-left"></i></button>
+      <h2 id="boardTitle"></h2>
     </div>
+    <button class="add-task-btn btn btn-primary"><i class="fa-solid fa-plus"></i> Add Task</button>
+  </div>
+
+  <div class="board-columns">
+    <!-- Todo Column -->
+    <div class="column todo">
+      <div class="column-header">
+        <div class="column-header-left">
+          <i class="fa-solid fa-circle-list status-todo"></i>
+          <span>Todo</span>
+          <span class="column-count" id="todo-count">0</span>
+        </div>
+      </div>
+      <div class="task-list"></div>
+    </div>
+
+    <!-- In Progress Column -->
+    <div class="column in-progress">
+      <div class="column-header">
+        <div class="column-header-left">
+          <i class="fa-solid fa-spinner fa-spin-pulse status-progress"></i>
+          <span>In Progress</span>
+          <span class="column-count" id="progress-count">0</span>
+        </div>
+      </div>
+      <div class="task-list"></div>
+    </div>
+
+    <!-- Review Column -->
+    <div class="column review">
+      <div class="column-header">
+        <div class="column-header-left">
+          <i class="fa-solid fa-eye status-review"></i>
+          <span>Review</span>
+          <span class="column-count" id="review-count">0</span>
+        </div>
+      </div>
+      <div class="task-list"></div>
+    </div>
+
+    <!-- Done Column -->
+    <div class="column done">
+      <div class="column-header">
+        <div class="column-header-left">
+          <i class="fa-solid fa-circle-check status-done"></i>
+          <span>Done</span>
+          <span class="column-count" id="done-count">0</span>
+        </div>
+      </div>
+      <div class="task-list"></div>
+    </div>
+  </div>
+</div>
   </main>
 
   <!-- ADD TASK MODAL -->
