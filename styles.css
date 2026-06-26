@@ -563,7 +563,7 @@ body {
   justify-content: center;
 
   border-radius: 50%;
-  background: #6084e5a2;
+ 
   color: var(--primary);
   font-weight: bold;
   flex-shrink: 0;

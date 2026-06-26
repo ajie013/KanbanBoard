@@ -78,7 +78,7 @@ const taskModal = new Modal("taskModal", "taskOverlay" );
 const viewModal = new Modal("taskViewModal", "taskViewOverlay");
 
 //Toast instance
-const toast = new Toast(".toast-wrapper", ".toast-title", ".toast-content", ".toast-close")
+const toast = new Toast(".toast-wrapper", ".toast-title", ".toast-content", ".toast-close", ".toast-icon")
 
 projectModal.onClose(() =>{
     projectNameInput.value = "";
@@ -106,7 +106,11 @@ viewModal.onClose(() => {
 const addProject = () =>{
   const name = projectNameInput.value.trim();
 
-  if (!name) return;
+  if (!name){
+    toast.showToast("Projection Creation Failed", "Name cannot be empty.", false);
+
+    return;
+  }
 
   projectList.push({ id: Date.now(), name, board: new KanbanBoard() });
 
@@ -114,7 +118,7 @@ const addProject = () =>{
   sidebar.classList.remove('open');
   render(projectList, selectedProject, ui);
 
-  toast.showToast("Project Created", "The project was created successfully.")
+  toast.showToast("Project Created", "The project was created successfully.", true)
 }
 
 const deleteProject = (projectId: number) =>{
@@ -123,7 +127,7 @@ const deleteProject = (projectId: number) =>{
   if (selectedProject?.id === projectId) selectedProject = null;
 
   render(projectList, selectedProject, ui);
-  toast.showToast("Project Deleted", "The project was removed successfully.")
+  toast.showToast("Project Deleted", "The project was removed successfully.", true)
 }
 
 //TASK OPERATIONS
@@ -133,14 +137,18 @@ const onAddTask = () =>{
   const title = taskTitleInput.value.trim();
   const desc = taskDescInput.value.trim();
 
-  if (!title) return;
+  if (!title){
+    toast.showToast("Failed", "Title cannot be empty.", false);
+
+    return;
+  }
 
   selectedProject.board.addTask(title, desc);
   
   taskModal.close()
   render(projectList, selectedProject, ui);
 
-  toast.showToast("Task Added", "The task was added successfully.")
+  toast.showToast("Task Added", "The task was added successfully.", true)
 }
 
 const onUpdateTask = () =>{
@@ -156,14 +164,14 @@ const onUpdateTask = () =>{
 
   viewModal.close(); 
   render(projectList, selectedProject, ui);
-  toast.showToast("Task Updated", "The task was updated successfully.")
+  toast.showToast("Task Updated", "The task was updated successfully.", true)
 }
 
 const onDeleteTask = (taskId: number) =>{
   selectedProject?.board.deleteTask(taskId);
 
   render(projectList, selectedProject, ui);
-  toast.showToast("Task Deleted", "The task was removed successfully.")
+  toast.showToast("Task Deleted", "The task was removed successfully.", true)
 }
 
 //SideBar events
